@@ -14,6 +14,8 @@ export const Main = styled.main`
   top: 80px;
   width: 100%;
   padding: 0 20px;
+  margin: 0 auto;
+  max-width: 90%;
 
   @media ${device.md} {
     padding: 0 40px;

@@ -1,39 +1,89 @@
 import React from 'react';
 
 import Box from '../../components/box';
-import Header from '../../components/header';
-import { Button, Input, Textarea, Wrapper, Row, Panel } from './styles';
+
+import PlaceholderPreview from '../../components/preview/placeholder';
+import LinkedinPreview from '../../components/preview/linkedin';
+import InstagramPreview from '../../components/preview/instagram';
+
+import {
+  Option,
+  Input,
+  Wrapper,
+  Row,
+  Panel,
+  Textarea,
+  BoxPreview,
+} from './styles';
 
 import social from '../../data/social-networks.json';
+import Layout from '../../components/layout';
+import UploadFiles from '../../components/upload';
 
 const PageAppointments = () => {
   const { data } = social;
-  const [selected, setSelected] = React.useState([]);
+  const selectedArray = [];
 
-  // validar se item esta ativo
-  // adicionar ou remover do preview no clique do botao
+  const postInformation = {
+    user: 'Anselmo Carlos',
+    date: '06 de Setembro',
+    title: 'Aqui vai o texto descritivo desse post',
+    image: Image,
+  };
+
+  const handleSelected = React.useCallback(id => {
+    if (selectedArray.find(i => i === id)) {
+      const index = selectedArray.indexOf(id);
+      if (index > -1) {
+        selectedArray.splice(index, 1);
+      }
+    } else {
+      selectedArray.push(id);
+    }
+  }, []);
+
+  const renderInstagram = React.useEffect(() => {
+    return selectedArray.find(i => i === 2) ? (
+      <InstagramPreview data={postInformation} />
+    ) : (
+      ''
+    );
+  }, [selectedArray]);
+
+  const renderLinkedin = React.useEffect(() => {
+    return selectedArray.find(i => i === 3) ? (
+      <LinkedinPreview data={postInformation} />
+    ) : (
+      ''
+    );
+  }, [selectedArray]);
 
   return (
-    <>
-      <Header />
+    <Layout>
       <Wrapper>
         <Panel>
           <Row>
-            <Box title="Redes Sociais">
-              {data.map(item => (
-                <Button
-                  key={item.id}
-                  status={item.status}
-                  selected={selected === item.id}
-                  onClick={() => setSelected(item.id)}
-                >
-                  <i className={`fab fa-${item.icon}`} />
-                </Button>
-              ))}
+            <Box half title="Redes Sociais">
+              {data.map(item => {
+                return (
+                  <Option key={item.id} status={item.status}>
+                    <input
+                      onClick={() => handleSelected(item.id)}
+                      type="checkbox"
+                      id={item.id}
+                    />
+                    <label htmlFor={item.id}>
+                      <i className={`fab fa-${item.icon}`} />
+                    </label>
+                  </Option>
+                );
+              })}
             </Box>
-            <Box title="Data de publicação">
-              <Input type="date" />
-              <Input type="time" />
+            <Box half title="Data de publicação">
+              <Row>
+                <Input type="date" />
+                <Input type="time" />
+              </Row>
             </Box>
           </Row>
           <Row>
@@ -41,14 +91,27 @@ const PageAppointments = () => {
               <Textarea placeholder="Aqui vai o texto descritivo desse post" />
             </Box>
           </Row>
+          <Row>
+            <Box title="Upload de imagem">
+              <UploadFiles />
+            </Box>
+          </Row>
         </Panel>
         <Panel>
           <Row>
-            <Box title="Visualização do post" />
+            <Box title="Visualização do post">
+              <BoxPreview>
+                {(renderInstagram, renderLinkedin)}
+
+                <PlaceholderPreview />
+                {/* <InstagramPreview data={postInformation} />
+                <LinkedinPreview data={postInformation} /> */}
+              </BoxPreview>
+            </Box>
           </Row>
         </Panel>
       </Wrapper>
-    </>
+    </Layout>
   );
 };
 

@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 
-import { Main } from '../../styles/shared';
 import { device } from '../../styles/devices';
 
-export const Wrapper = styled(Main)`
+export const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
 
