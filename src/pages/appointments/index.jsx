@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Box from '../../components/box';
 
@@ -22,7 +22,7 @@ import UploadFiles from '../../components/upload';
 
 const PageAppointments = () => {
   const { data } = social;
-  const selectedArray = [];
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const postInformation = {
     user: 'Anselmo Carlos',
@@ -31,32 +31,23 @@ const PageAppointments = () => {
     image: Image,
   };
 
-  const handleSelected = React.useCallback(id => {
-    if (selectedArray.find(i => i === id)) {
-      const index = selectedArray.indexOf(id);
-      if (index > -1) {
-        selectedArray.splice(index, 1);
-      }
+  const onSocialButtonClick = itemId => {
+    const selectedIndex = selectedIds.find(id => id === itemId);
+
+    if (selectedIndex) {
+      const newArr = selectedIds.splice(selectedIndex, 1);
+      setSelectedIds(newArr);
     } else {
-      selectedArray.push(id);
+      setSelectedIds(oldArr => [...oldArr, itemId]);
     }
-  }, []);
+  };
 
-  const renderInstagram = React.useEffect(() => {
-    return selectedArray.find(i => i === 2) ? (
-      <InstagramPreview data={postInformation} />
-    ) : (
-      ''
-    );
-  }, [selectedArray]);
+  const isSelected = itemId => {
+    const index = selectedIds.indexOf(itemId);
+    const selected = index >= 0;
 
-  const renderLinkedin = React.useEffect(() => {
-    return selectedArray.find(i => i === 3) ? (
-      <LinkedinPreview data={postInformation} />
-    ) : (
-      ''
-    );
-  }, [selectedArray]);
+    return selected;
+  };
 
   return (
     <Layout>
@@ -64,20 +55,18 @@ const PageAppointments = () => {
         <Panel>
           <Row>
             <Box half title="Redes Sociais">
-              {data.map(item => {
-                return (
-                  <Option key={item.id} status={item.status}>
-                    <input
-                      onClick={() => handleSelected(item.id)}
-                      type="checkbox"
-                      id={item.id}
-                    />
-                    <label htmlFor={item.id}>
-                      <i className={`fab fa-${item.icon}`} />
-                    </label>
-                  </Option>
-                );
-              })}
+              {data.map(({ id, icon }) => (
+                <Option
+                  key={id}
+                  selected={isSelected(id)}
+                  onClick={() => onSocialButtonClick(id)}
+                >
+                  <input type="checkbox" id={id} />
+                  <label htmlFor={id}>
+                    <i className={`fab fa-${icon}`} />
+                  </label>
+                </Option>
+              ))}
             </Box>
             <Box half title="Data de publicação">
               <Row>
@@ -101,11 +90,9 @@ const PageAppointments = () => {
           <Row>
             <Box title="Visualização do post">
               <BoxPreview>
-                {(renderInstagram, renderLinkedin)}
-
                 <PlaceholderPreview />
-                {/* <InstagramPreview data={postInformation} />
-                <LinkedinPreview data={postInformation} /> */}
+                {isSelected(2) && <LinkedinPreview data={postInformation} />}
+                {isSelected(3) && <InstagramPreview data={postInformation} />}
               </BoxPreview>
             </Box>
           </Row>

@@ -38,9 +38,13 @@ export const Wrapper = styled.section`
 `;
 
 export const Option = styled.div`
-  ${props => status[props.status]};
-
+  /* ${props => status[props.status]}; */
   label {
+    background-color: ${({ selected }) => {
+      const color = selected ? 'red' : 'yellow';
+      console.log(selected, color);
+      return color;
+    }};
     font-size: 18px;
     width: 33px;
     height: 33px;
@@ -52,6 +56,7 @@ export const Option = styled.div`
     justify-content: center;
     margin: 0 15px 0 0;
     transition: all 0.2s;
+    cursor: pointer;
   }
 
   input {
